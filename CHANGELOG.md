@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.13] - 2025-11-22
+
+### Fixed
+- **MCP server startup error**: Fix "Invalid or unexpected token" error when starting MCP server
+  - Changed plugin.json to use `cli/mcp-server-wrapper.js` instead of bash script `cli/mcp-server`
+  - MCP server configuration was pointing to bash script which was being executed with `node` command
+  - Wrapper script properly handles Node.js execution and runs bundled `dist/mcp-server.js`
+
+## [1.0.12] - 2025-11-22
+
+### Changed
+- **Skill triggering behavior**: Improved episodic memory skill to trigger at appropriate times
+  - Changed from "ALWAYS USE THIS SKILL WHEN STARTING ANY KIND OF WORK" to contextual triggers
+  - Now triggers when user asks for approach/decision after exploring code
+  - Now triggers when stuck on complex problems after investigating
+  - Now triggers for unfamiliar workflows or explicit historical references
+  - Prevents premature memory searches before understanding current codebase
+  - Empirically tested with subagents: 5/5 scenarios passed vs 3/5 with previous description
+
+## [1.0.11] - 2025-11-20
+
+### Fixed
+- **Plugin Configuration**: Fix duplicate hooks file error in Claude Code
+  - Remove duplicate `"hooks": "./hooks/hooks.json"` reference from plugin.json
+  - Claude Code automatically loads hooks/hooks.json, so manifest should only reference additional hook files
+  - Update MCP server reference from obsolete `mcp-server-wrapper.js` to direct `mcp-server` script
+
+### Changed
+- Simplified plugin.json configuration for cleaner Claude Code integration
+
+## [1.0.10] - 2025-11-20
+
+### Fixed
+- **Search result formatting**: Prevent Claude's Read tool 256KB limit failures
+  - Search results now include file metadata (size in KB, total line count)
+  - Changed from verbose 3-line format to clean 1-line: "Lines 10-25 in /path/file.jsonl (295.7KB, 1247 lines)"
+  - Removes prescriptive MCP tool instructions, trusting Claude to choose correct tool based on file size
+  - Eliminates issue where episodic memory search triggered built-in Read tool instead of specialized MCP read tool
+
+### Changed
+- Enhanced `formatResults()` and `formatMultiConceptResults()` with async file metadata collection
+- Added efficient streaming line counting and file size utilities
+- Updated MCP server and CLI callers to handle async formatting functions
+
 ## [1.0.9] - 2025-10-31
 
 ### Removed
